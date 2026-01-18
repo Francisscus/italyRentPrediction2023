@@ -11,18 +11,18 @@ def load_model(path):
     artifact = joblib.load(path)
     return artifact["model"], artifact["features"], artifact["pandas_version"]
 
-def build_features():
-    surface = float(input("Inserisci superfice: " ))
-    city = str(input("Inserisci città: "))
-    housing_unit = str(input("Inserisci tipo di abitazione: "))
-    floor = float(input("A quale piano si trova? ")) 
-    num_rooms = float(input("Quante stanze ha? "))
+def build_features(surface, city, housing_unit, floor, num_rooms  ):
+    # surface = float(input("Inserisci superfice: " ))
+    # city = str(input("Inserisci città: "))
+    # housing_unit = str(input("Inserisci tipo di abitazione: "))
+    # floor = float(input("A quale piano si trova? ")) 
+    # num_rooms = float(input("Quante stanze ha? "))
 
-    print(surface)
-    print(city)
-    print(housing_unit)
-    print(floor)
-    print(num_rooms)
+    # print(surface)
+    # print(city)
+    # print(housing_unit)
+    # print(floor)
+    # print(num_rooms)
 
     df_predict = pd.DataFrame(columns=['Surface', 'City', 'Housing_unit', 'floor',  'num_rooms'])
 
