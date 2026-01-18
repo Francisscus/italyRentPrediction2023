@@ -152,15 +152,27 @@ with st.form("prediction_form"):
 
     submitted = st.form_submit_button("Predict rent 💰")
 
+# if submitted:
+#     X = build_features(surface, city, housing_unit, floor, num_rooms)
+#     prediction = int(predict_rent(model, X))
+
+#     st.success(f"💶 **Estimated rent: {prediction} € / month**")
+
+#     with st.expander("Show input features"):
+#         st.dataframe(X)
+
 if submitted:
     X = build_features(surface, city, housing_unit, floor, num_rooms)
     prediction = int(predict_rent(model, X))
 
-    st.success(f"💶 **Estimated rent: {prediction} € / month**")
+    # ✅ LOGGING HERE
+    import datetime
+    st.write("Prediction time:", datetime.datetime.now())
+
+    st.success(f"💶 Estimated rent: {prediction} € / month")
 
     with st.expander("Show input features"):
         st.dataframe(X)
-
 
 # Write in the cmd Terminal: streamlit run app.py
 
