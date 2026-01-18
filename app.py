@@ -167,12 +167,17 @@ if submitted:
 
     # ✅ LOGGING HERE
     import datetime
+    import logging
     st.write("Prediction time:", datetime.datetime.now())
+
+    logging.info(f"Prediction: {prediction} | Inputs: {X.to_dict()}")	
 
     st.success(f"💶 Estimated rent: {prediction} € / month")
 
     with st.expander("Show input features"):
         st.dataframe(X)
+
+
 
 # Write in the cmd Terminal: streamlit run app.py
 
