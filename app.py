@@ -3,22 +3,13 @@ import numpy as np
 import joblib
 import streamlit as st
 
+@st.cache_resource
 def main():
     pass
-
 
 def load_model(path):
     artifact = joblib.load(path)
     return artifact["model"], artifact["features"], artifact["pandas_version"]
-
-# def build_features(surface, city, housing_unit, floor, num_rooms):
-#     df_predict = pd.DataFrame([{
-#         "Surface": surface,
-#         "City": city,
-#         "Housing_unit": housing_unit,
-#         "floor": floor,
-#         "num_rooms": num_rooms
-#     }])
 
 def build_features():
     surface = float(input("Inserisci superfice: " ))
@@ -120,8 +111,7 @@ def build_features():
         'num_rooms', 'surface_bracket']]
     
     df_predict[['City', 'Housing_unit', 'city_size', 
-                   'macroregion', 'surface_bracket']] = df_predict[['City', 'Housing_unit', 'city_size', 
-                                                                    'macroregion', 'surface_bracket']].astype('category')
+                   'macroregion', 'surface_bracket']] = df_predict[['City', 'Housing_unit', 'city_size', 'macroregion', 'surface_bracket']].astype('category')
     
     # print(df_predict)
     return df_predict
@@ -131,23 +121,47 @@ def predict_rent(model, X):
 
 
 
+# ================== STREAMLIT UI ==================
 
-if __name__ == "__main__":
-    main()
+st.set_page_config(page_title="Rent Price Predictor", layout="centered")
 
-    model, features, version = load_model("models/lgbm_regressor_v1.pkl")
-    print(version)
+st.title("🏠 Rent Price Prediction")
+st.write("Insert the apartment details to estimate the ideal rent price.")
 
-    df = build_features()
-    print(df)
-    print("\n")
-    
-    # prediction = model.predict(df)
-    prediction = int(predict_rent(model, df))
-    print("\n")
-    print("------------- PREDICTION -------------")
-    print("\n")
-    print(f"Il canone di affitto ideale è di {prediction} €")
-    print("\n")
-    print("--------------------------------------")
+model, features, version = load_model("models/lgbm_regressor_v1.pkl")
+
+st.caption(f"Model trained with pandas {version}")
+
+with st.form("prediction_form"):
+    surface = st.number_input("Surface (m²)", min_value=10.0, max_value=500.0, step=5.0)
+    city = st.selectbox(
+        "City",
+        ["Roma", "Milano", "Napoli", "Torino", "Palermo", "Genova",
+         "Bologna", "Firenze", "Bari", "Catania", "Verona", "Venezia",
+         "Messina", "Padova", "Trieste", "Brescia", "Taranto",
+         "Prato", "Parma", "Modena"]
+    )
+    housing_unit = st.selectbox(
+        "Housing type",
+            ['Monolocale', 'Bilocale', 'Quadrilocale', 'Trilocale',
+            'Appartamento', 'Attico', 'Mansarda', 'Loft', 'Open space',
+            'Villa', 'Palazzo', 'Casale', 'Terratetto']
+    )
+    floor = st.number_input("Floor", min_value=0.0, max_value=6.0, step=1.0)
+    num_rooms = st.number_input("Number of rooms", min_value=1.0, max_value=20.0, step=1.0)
+
+    submitted = st.form_submit_button("Predict rent 💰")
+
+if submitted:
+    X = build_features(surface, city, housing_unit, floor, num_rooms)
+    prediction = int(predict_rent(model, X))
+
+    st.success(f"💶 **Estimated rent: {prediction} € / month**")
+
+    with st.expander("Show input features"):
+        st.dataframe(X)
+
+
+# Write in the cmd Terminal: streamlit run app.py
+
 
